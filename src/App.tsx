@@ -309,16 +309,17 @@ export default function App() {
                                 </div>
                             </div>
                             <p style={s.mBio}>{selected.bio || selected.desc}</p>
-                            <div style={s.socialRow}>
-                                {selected.type === "staff" ? (
-                                    <>
-                                        <span style={s.socialTag}>🎮 {selected.roblox}</span>
-                                        <span style={s.socialTag}>💬 {selected.discord}</span>
-                                    </>
-                                ) : (
-                                    <span style={s.socialTag}>📍 {selected.loc}</span>
-                                )}
-                            </div>
+                        <div style={s.socialRow}>
+                            {selected.type === "staff" && (
+                                <>
+                                    <span style={s.socialTag}>🎮 {selected.roblox}</span>
+                                    <span style={s.socialTag}>💬 {selected.discord}</span>
+                                 </>
+                            )}
+                            {selected.type === "event" && (
+                                 <span style={s.socialTag}>📍 {selected.loc}</span>
+                            )}
+                        </div>
                         </motion.div>
                     </motion.div>
                 )}
