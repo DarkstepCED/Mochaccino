@@ -1,3 +1,4 @@
+import * as React from "react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -102,17 +103,11 @@ export default function App() {
                 html, body { 
                     margin: 0; 
                     padding: 0; 
-                    min-height: 100%; 
+                    min-height: 100vh; 
                     background-color: #1a0f0d; 
-                }
-                
-                body { 
-                    background-image: linear-gradient(135deg, rgba(42,23,18,0.94) 0%, rgba(111,78,55,0.4) 100%), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=2000'); 
-                    background-size: cover; 
-                    background-position: center; 
-                    background-attachment: fixed;
                     font-family: 'Inter', sans-serif;
                     color: #FFFDD0;
+                    overflow-x: hidden;
                 }
                 
                 * { box-sizing: border-box; }
@@ -120,11 +115,16 @@ export default function App() {
                 ::-webkit-scrollbar-thumb { background: #6F4E37; border-radius: 10px; }
             `}</style>
 
-            <motion.div 
-                animate={{ x: [0, 80, 0], opacity: [0.2, 0.4, 0.2] }} 
-                transition={{ duration: 25, repeat: Infinity }} 
-                style={s.blob} 
-            />
+            {/* ВЕРНУЛИ НАШ СТЕКЛЯННЫЙ ФОН */}
+            <div style={s.bgContainer}>
+                <div style={s.bgImage} />
+                <div style={s.bgGlass} />
+                <motion.div 
+                    animate={{ x: [0, 80, 0], opacity: [0.2, 0.4, 0.2] }} 
+                    transition={{ duration: 25, repeat: Infinity }} 
+                    style={s.blob} 
+                />
+            </div>
 
             <header style={s.header}>
                 <div style={s.timerBar}>
@@ -300,7 +300,6 @@ export default function App() {
     )
 }
 
-// Отформатированные стили без длинных строк
 const s: any = {
     root: { 
         display: "flex", 
@@ -308,17 +307,39 @@ const s: any = {
         minHeight: "100vh", 
         position: "relative" 
     },
-    blob: { 
+    
+    // ВЕРНУЛИ КОНТЕЙНЕР ДЛЯ ФОНА
+    bgContainer: { 
         position: "fixed", 
+        inset: 0, 
+        zIndex: -1, 
+        pointerEvents: "none", 
+        overflow: "hidden" 
+    },
+    bgImage: { 
+        position: "absolute", 
+        inset: "-50px", // Скрывает белые края от размытия
+        backgroundImage: "url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=2000')", 
+        backgroundSize: "cover", 
+        backgroundPosition: "center", 
+        filter: "brightness(0.35) blur(30px)" // ВЕРНУЛИ СИЛЬНОЕ РАЗМЫТИЕ
+    },
+    bgGlass: { 
+        position: "absolute", 
+        inset: 0, 
+        background: "linear-gradient(135deg, rgba(42,23,18,0.94) 0%, rgba(111,78,55,0.4) 100%)", 
+        backdropFilter: "blur(40px)" 
+    },
+    blob: { 
+        position: "absolute", 
         top: "10%", 
         left: "20%", 
         width: "700px", 
         height: "700px", 
         background: "radial-gradient(circle, rgba(111,78,55,0.4) 0%, transparent 70%)", 
-        filter: "blur(120px)", 
-        zIndex: -1, 
-        pointerEvents: "none" 
+        filter: "blur(120px)" 
     },
+
     header: { 
         position: "fixed", 
         top: 0, 
@@ -418,7 +439,8 @@ const s: any = {
         paddingTop: "180px", 
         width: "100%", 
         display: "flex", 
-        flexDirection: "column" 
+        flexDirection: "column",
+        zIndex: 10
     },
     page: { 
         width: "100%", 
@@ -614,7 +636,8 @@ const s: any = {
         padding: "60px 40px", 
         color: "#FFFDD0", 
         opacity: 0.4, 
-        fontSize: "11px" 
+        fontSize: "11px",
+        zIndex: 10
     },
     overlay: { 
         position: "fixed", 
