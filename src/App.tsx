@@ -33,7 +33,7 @@ export default function App() {
     ]
 
     const staffList = [
-    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "@Nana_President", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "/public/Bildschirmfoto 2026-04-02 um 22.34.02.png"},
+    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "@Nana_President", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Bildschirmfoto 2026-04-02 um 22.34.02.png"},
     { id: "305367354321305600", team: "Presidential Team", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" },
     
     // Вот примеры новых команд (можешь добавлять их сколько угодно):
