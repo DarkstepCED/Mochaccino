@@ -33,12 +33,12 @@ export default function App() {
     ]
 
     const staffList = [
-    { id: "671746748703571990", team: "president", name: "Nana", role: "President", roblox: "@Nana_President", discord: "nana#1234", bio: "Overseeing all operations with love.", image: logo },
-    { id: "305367354321305600", team: "president", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" },
+    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "@Nana_President", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "/public/Bildschirmfoto 2026-04-02 um 22.34.02.png"},
+    { id: "305367354321305600", team: "Presidential Team", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" },
     
     // Вот примеры новых команд (можешь добавлять их сколько угодно):
-    { id: "111", team: "shell", name: "Alex", role: "Shell Manager", roblox: "@AlexTheShell", discord: "alex#111", bio: "Shell team logic.", image: "" },
-    { id: "222", team: "leg ship", name: "Bob", role: "Ship Captain", roblox: "@CaptainBob", discord: "bob#222", bio: "Sailing the leg ship.", image: "" }
+    { id: "111", team: "Development Team", name: "Alex", role: "Shell Manager", roblox: "@AlexTheShell", discord: "alex#111", bio: "Shell team logic.", image: "" },
+    { id: "222", team: "Chief Executive Director", name: "Bob", role: "Ship Captain", roblox: "@CaptainBob", discord: "bob#222", bio: "Sailing the leg ship.", image: "" }
     ]
 
     const eventsData = [
@@ -204,7 +204,7 @@ export default function App() {
         {/* НОВЫЙ БЛОК: Кнопки фильтров (Вкладки) */}
         <div style={s.menuFilterWrap}>
             {/* Сюда впиши те названия команд, которые хочешь видеть на кнопках */}
-            {["all", "president", "shell", "leg ship"].map(tab => (
+            {["All", "Presidential Team", "Development Team", "Chief Executive Director", "Chief Of Public Relations"].map(tab => (
                 <div key={tab} style={s.filterBtn(staffTab === tab)} onClick={() => setStaffTab(tab)}>
                     {tab.toUpperCase()}
                 </div>
