@@ -214,7 +214,7 @@ export default function App() {
         {/* НОВЫЙ БЛОК: Кнопки фильтров (Вкладки) */}
         <div style={s.menuFilterWrap}>
             {/* Сюда впиши те названия команд, которые хочешь видеть на кнопках */}
-            {["All", "Presidential Team", "Development Team", "Chief Executive Director", "Chief Of Public Relations"].map(tab => (
+            {["All", "Presidential Team", "Development Team", "Chief Executive Director", "Chief of Public Relations"].map(tab => (
                 <div key={tab} style={s.filterBtn(staffTab === tab)} onClick={() => setStaffTab(tab)}>
                     {tab.toUpperCase()}
                 </div>
