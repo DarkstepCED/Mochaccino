@@ -5,8 +5,10 @@ export default function App() {
     const [page, setPage] = useState("home")
     const [selected, setSelected] = useState<any>(null)
     const [menuTab, setMenuTab] = useState("all")
+    const [staffTab, setStaffTab] = useState("all")
     const [timeLeft, setTimeLeft] = useState("CALCULATING...")
     const [isMounted, setIsMounted] = useState(false)
+    
     
     const [liveStatuses, setLiveStatuses] = useState<Record<string, string>>({})
     const [localTimes, setLocalTimes] = useState<Record<string, {date: string, time: string}>>({})
@@ -31,8 +33,12 @@ export default function App() {
     ]
 
     const staffList = [
-        { id: "671746748703571990", type: "staff", name: "Nana", role: "President", roblox: "@Nana_President", discord: "nana#1234", bio: "Overseeing all operations with love.", image: logo },
-        { id: "305367354321305600", type: "staff", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" }
+    { id: "671746748703571990", team: "president", name: "Nana", role: "President", roblox: "@Nana_President", discord: "nana#1234", bio: "Overseeing all operations with love.", image: logo },
+    { id: "305367354321305600", team: "president", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" },
+    
+    // Вот примеры новых команд (можешь добавлять их сколько угодно):
+    { id: "111", team: "shell", name: "Alex", role: "Shell Manager", roblox: "@AlexTheShell", discord: "alex#111", bio: "Shell team logic.", image: "" },
+    { id: "222", team: "leg ship", name: "Bob", role: "Ship Captain", roblox: "@CaptainBob", discord: "bob#222", bio: "Sailing the leg ship.", image: "" }
     ]
 
     const eventsData = [
@@ -192,25 +198,37 @@ export default function App() {
                     )}
 
                     {page === "staff" && (
-                        <motion.div key="staff" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                            <h2 style={s.pageTitle}>Elite Team</h2>
-                            <div style={s.grid}>
-                                {staffList.map(m => (
-                                    <div key={m.id} style={s.card} onClick={() => setSelected(m)}>
-                                        <div style={s.avatarWrap}>
-                                            <div style={s.avatarInner}>
-                                                {m.image ? <img src={m.image} style={s.imgFull} /> : "☕"}
-                                            </div>
-                                            <div style={{...s.statusDot, background: getStatusColor(m.id)}} />
-                                        </div>
-                                        <h3 style={s.cardTitle}>{m.name}</h3>
-                                        <div style={s.badge}>{m.role}</div>
-                                        <button style={s.cardBtn}>Read Bio</button>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
+    <motion.div key="staff" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
+        <h2 style={s.pageTitle}>Elite Team</h2>
+
+        {/* НОВЫЙ БЛОК: Кнопки фильтров (Вкладки) */}
+        <div style={s.menuFilterWrap}>
+            {/* Сюда впиши те названия команд, которые хочешь видеть на кнопках */}
+            {["all", "president", "shell", "leg ship"].map(tab => (
+                <div key={tab} style={s.filterBtn(staffTab === tab)} onClick={() => setStaffTab(tab)}>
+                    {tab.toUpperCase()}
+                </div>
+            ))}
+        </div>
+
+        {/* ИЗМЕНЕННЫЙ БЛОК: Сортировка карточек по команде + плавная анимация (layout) */}
+        <div style={s.grid}>
+            {staffList.filter(m => staffTab === "all" || m.team === staffTab).map(m => (
+                <motion.div layout key={m.id} style={s.card} onClick={() => setSelected(m)}>
+                    <div style={s.avatarWrap}>
+                        <div style={s.avatarInner}>
+                            {m.image ? <img src={m.image} style={s.imgFull} /> : "☕"}
+                        </div>
+                        <div style={{...s.statusDot, background: getStatusColor(m.id)}} />
+                    </div>
+                    <h3 style={s.cardTitle}>{m.name}</h3>
+                    <div style={s.badge}>{m.role}</div>
+                    <button style={s.cardBtn}>Read Bio</button>
+                </motion.div>
+            ))}
+        </div>
+    </motion.div>
+)}
 
                     {page === "events" && (
                         <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
