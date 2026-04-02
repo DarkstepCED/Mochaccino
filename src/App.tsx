@@ -33,12 +33,22 @@ export default function App() {
     ]
 
     const staffList = [
-    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "@Nana_President", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Bildschirmfoto 2026-04-02 um 22.34.02.png"},
-    { id: "305367354321305600", team: "Presidential Team", name: "Starlit", role: "Director", roblox: "@Starlit_Night", discord: "starlit#0000", bio: "Guardian of community safety.", image: "" },
-    
-    // Вот примеры новых команд (можешь добавлять их сколько угодно):
-    { id: "111", team: "Development Team", name: "Alex", role: "Shell Manager", roblox: "@AlexTheShell", discord: "alex#111", bio: "Shell team logic.", image: "" },
-    { id: "222", team: "Chief Executive Director", name: "Bob", role: "Ship Captain", roblox: "@CaptainBob", discord: "bob#222", bio: "Sailing the leg ship.", image: "" }
+    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "nanax_xo", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Nana.png"},
+    { id: "848369546717036564", team: "Presidential Team", name: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆", role: "Co-Owner", roblox: "catca54t", discord: ".xjen.", bio: "Guardian of community safety.", image: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆.png"},
+    { id: "980557222142689290", team: "Presidential Team", name: "Carlz_Panda", role: "President", roblox: "Carlz_Panda", discord: "carly_xox", bio: "Guardian of community safety.", image: "Carlz_Panda.png"},
+    { id: "1193113047078801438", team: "Presidential Team", name: "sharky", role: "President", roblox: "Pizzaboyjack5", discord: "pizzaboyjack5", bio: "Guardian of community safety.", image: "sharky.png"},
+    { id: "1130075748946944051", team: "Presidential Team", name: "LeiAdores", role: "Vice President", roblox: "lhunt55", discord: "lhunt55", bio: "Guardian of community safety.", image: "LeiAdores.png"},
+    { id: "985444871722631199", team: "Presidential Team", name: "SaD", role: "Vice President", roblox: "seejedsajjoida", discord: "ts_122", bio: "Guardian of community safety.", image: "SaD.png"},
+
+    { id: "1186115875028357273", team: "Development Team", name: "MADD", role: "Developer", roblox: "-", discord: "powerislife", bio: "Shell team logic.", image: "MADD.png" },
+    { id: "671342529828093952", team: "Development Team", name: "philip", role: "Developer", roblox: "-", discord: "ibimsderphilip", bio: "Shell team logic.", image: "philip.png" },
+    { id: "1061318604227891240", team: "Development Team", name: "AzureWrath", role: "Developer", roblox: "-", discord: "imjustrockylol", bio: "Shell team logic.", image: "AzureWrath.png" },
+
+    { id: "803581244452896788", team: "Chief of Public Relations", name: "TiaAdores", role: "Chief of Public Relations", roblox: "patriziaa_xx", discord: "patriziaa", bio: "Shell team logic.", image: "Patriziaa.png" },
+    { id: "1222193133308084388", team: "Chief of Public Relations", name: "イーサン", role: "Chief of Public Relations", roblox: "VoidLatteRblx", discord: "officialvoidlatte.exe", bio: "Shell team logic.", image: "OfficialVoidLatte.png" },
+
+    { id: "671746748703571990", team: "Chief Executive Director", name: "Darkstep", role: "Chief Executive Director", roblox: "boyhy1562", discord: "darkstep5766", bio: "World traveler.", image: "Darkstep.png" },
+    { id: "1093471267878875206", team: "Chief Executive Director", name: "Avionyxx", role: "Chief Executive Director", roblox: "Avionyxx", discord: "avionyxx_official", bio: "World traveler.", image:("Avionyxx.png") }
     ]
 
     const eventsData = [
