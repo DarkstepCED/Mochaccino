@@ -8,8 +8,8 @@ export default function App() {
     const [staffTab, setStaffTab] = useState("all")
     const [timeLeft, setTimeLeft] = useState("CALCULATING...")
     const [isMounted, setIsMounted] = useState(false)
-    
-    
+    const [eventTab, setEventTab] = useState("upcoming")
+    const [openFaq, setOpenFaq] = useState<string | null>(null)
     const [liveStatuses, setLiveStatuses] = useState<Record<string, string>>({})
     const [localTimes, setLocalTimes] = useState<Record<string, {date: string, time: string}>>({})
 
@@ -20,8 +20,8 @@ export default function App() {
         purple: "#A855F7"
     }
 
-    const logo = "https://media.discordapp.net/attachments/1486791344721625322/1487442152157090003/nanaserver.png?ex=69cf16b4&is=69cdc534&hm=9afb6c107eec290f035646de526f26905f2a77986483cc8eadbc81ea57132850&=&format=webp&quality=lossless&width=1450&height=1450"
-    const navItems = ["home", "staff", "menu", "events", "alliances"]
+    const logo = "logo.png" // Путь к вашему логотипу
+    const navItems = ["home", "about","staff", "menu", "events", "alliances", "faq"]
 
     const menuData = [
         { id: "m1", category: "desserts", name: "Classic Tiramisu", desc: "Layers of espresso ladyfingers and mascarpone cream.", price: "55 R$" },
@@ -33,26 +33,34 @@ export default function App() {
     ]
 
     const staffList = [
-    { id: "755771099668676739", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "nanax_xo", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Nana.png"},
-    { id: "848369546717036564", team: "Presidential Team", name: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆", role: "Co-Owner", roblox: "catca54t", discord: ".xjen.", bio: "Guardian of community safety.", image: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆.png"},
-    { id: "980557222142689290", team: "Presidential Team", name: "Carlz_Panda", role: "President", roblox: "Carlz_Panda", discord: "carly_xox", bio: "Guardian of community safety.", image: "Carlz_Panda.png"},
-    { id: "1193113047078801438", team: "Presidential Team", name: "sharky", role: "President", roblox: "Pizzaboyjack5", discord: "pizzaboyjack5", bio: "Guardian of community safety.", image: "sharky.png"},
-    { id: "1130075748946944051", team: "Presidential Team", name: "LeiAdores", role: "Vice President", roblox: "lhunt55", discord: "lhunt55", bio: "Guardian of community safety.", image: "LeiAdores.png"},
-    { id: "985444871722631199", team: "Presidential Team", name: "SaD", role: "Vice President", roblox: "seejedsajjoida", discord: "ts_122", bio: "Guardian of community safety.", image: "SaD.png"},
+    { id: "755771099668676739", type: "staff", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "nanax_xo", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Nana.png"},
+    { id: "848369546717036564", type: "staff",team: "Presidential Team", name: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆", role: "Co-Owner", roblox: "catca54t", discord: ".xjen.", bio: "Guardian of community safety.", image: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆.png"},
+    { id: "980557222142689290", type: "staff", team: "Presidential Team", name: "Carlz_Panda", role: "President", roblox: "Carlz_Panda", discord: "carly_xox", bio: "Guardian of community safety.", image: "Carlz_Panda.png"},
+    { id: "1193113047078801438", type: "staff", team: "Presidential Team", name: "sharky", role: "President", roblox: "Pizzaboyjack5", discord: "pizzaboyjack5", bio: "Guardian of community safety.", image: "sharky.png"},
+    { id: "1130075748946944051", type: "staff", team: "Presidential Team", name: "LeiAdores", role: "Vice President", roblox: "lhunt55", discord: "lhunt55", bio: "Guardian of community safety.", image: "LeiAdores.png"},
+    { id: "985444871722631199", type: "staff", team: "Presidential Team", name: "SaD", role: "Vice President", roblox: "seejedsajjoida", discord: "ts_122", bio: "Guardian of community safety.", image: "SaD.png"},
 
-    { id: "1186115875028357273", team: "Development Team", name: "MADD", role: "Developer", roblox: "-", discord: "powerislife", bio: "Shell team logic.", image: "MADD.png" },
-    { id: "671342529828093952", team: "Development Team", name: "philip", role: "Developer", roblox: "-", discord: "ibimsderphilip", bio: "Shell team logic.", image: "philip.png" },
-    { id: "1061318604227891240", team: "Development Team", name: "AzureWrath", role: "Developer", roblox: "-", discord: "imjustrockylol", bio: "Shell team logic.", image: "AzureWrath.png" },
+    { id: "1186115875028357273", type: "staff", team: "Development Team", name: "MADD", role: "Developer", roblox: "-", discord: "powerislife", bio: "Shell team logic.", image: "MADD.png" },
+    { id: "671342529828093952", type: "staff", team: "Development Team", name: "philip", role: "Developer", roblox: "-", discord: "ibimsderphilip", bio: "Shell team logic.", image: "philip.png" },
+    { id: "1061318604227891240", type: "staff", team: "Development Team", name: "AzureWrath", role: "Developer", roblox: "-", discord: "imjustrockylol", bio: "Shell team logic.", image: "AzureWrath.png" },
 
-    { id: "803581244452896788", team: "Chief of Public Relations", name: "TiaAdores", role: "Chief of Public Relations", roblox: "patriziaa_xx", discord: "patriziaa", bio: "Shell team logic.", image: "Patriziaa.png" },
-    { id: "1222193133308084388", team: "Chief of Public Relations", name: "イーサン", role: "Chief of Public Relations", roblox: "VoidLatteRblx", discord: "officialvoidlatte.exe", bio: "Shell team logic.", image: "OfficialVoidLatte.png" },
+    { id: "803581244452896788", type: "staff", team: "Chief of Public Relations", name: "TiaAdores", role: "Chief of Public Relations", roblox: "patriziaa_xx", discord: "patriziaa", bio: "Shell team logic.", image: "Patriziaa.png" },
+    { id: "1222193133308084388", type: "staff", team: "Chief of Public Relations", name: "イーサン", role: "Chief of Public Relations", roblox: "VoidLatteRblx", discord: "officialvoidlatte.exe", bio: "Shell team logic.", image: "OfficialVoidLatte.png" },
 
-    { id: "671746748703571990", team: "Chief Executive Director", name: "Darkstep", role: "Chief Executive Director", roblox: "boyhy1562", discord: "darkstep5766", bio: "World traveler.", image: "Darkstep.png" },
-    { id: "1093471267878875206", team: "Chief Executive Director", name: "Avionyxx", role: "Chief Executive Director", roblox: "Avionyxx", discord: "avionyxx_official", bio: "World traveler.", image:("Avionyxx.png") }
+    { id: "671746748703571990", type: "staff", team: "Chief Executive Director", name: "Darkstep", role: "Chief Executive Director", roblox: "boyhy1562", discord: "darkstep5766", bio: "World traveler.", image: "Darkstep.png" },
+    { id: "1093471267878875206", type: "staff", team: "Chief Executive Director", name: "Avionyxx", role: "Chief Executive Director", roblox: "Avionyxx", discord: "avionyxx_official", bio: "World traveler.", image: "Avionyxx.png" }
     ]
 
     const eventsData = [
         { id: "ev1", type: "event", title: "Grand Opening", iso: "2026-04-15T18:00:00Z", loc: "Main Cafe", desc: "Massive official launch party with free items!" },
+    ]
+
+    const faqData = [
+    { id: "faq1", q: "How can I become a staff member?", a: "We host interviews every weekend at our Training Center. Join our Discord server to check the exact schedule and requirements!" },
+    { id: "faq2", q: "Are there any age or account requirements?", a: "Yes, your Roblox account must be at least 30 days old to join our staff team. We expect maturity and professionalism from all our baristas." },
+    { id: "faq3", q: "Can I partner my group with Mochaccino?", a: "Absolutely! We love making new alliances. Head over to our Discord and open a Partnership ticket to speak with our Public Relations team." },
+    { id: "faq4", q: "Where can I report a rulebreaker?", a: "If you see someone breaking the rules in-game, please use the /report command or open a ticket in our Discord server with screenshot/video proof." },
+    { id: "faq5", q: "When is the next major update?", a: "Our Development Team is currently working on V3! Keep an eye on our announcements channel for sneak peeks and release dates." }
     ]
 
     const alliancesData = [
@@ -181,6 +189,47 @@ export default function App() {
                                 <p style={s.p}>Where every cup is a masterpiece and every guest is family.</p>
                                 <button onClick={() => setPage("menu")} style={s.ctaButton}>View Menu</button>
                             </div>
+                            <div style={{ display: "flex", gap: "20px", marginTop: "40px", flexWrap: "wrap", justifyContent: "center" }}>
+                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
+                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>10K+</h3>
+                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>MEMBERS</span>
+                                </div>
+                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
+                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>24/7</h3>
+                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>ACTIVE</span>
+                                </div>
+                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
+                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>V3</h3>
+                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>VERSION</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {page === "about" && (
+                        <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
+                            <h2 style={s.pageTitle}>Our Story</h2>
+                            <div style={{ maxWidth: "800px", background: "rgba(255,255,255,0.04)", padding: "40px", borderRadius: "30px", border: "1px solid rgba(255,255,255,0.1)", textAlign: "left", lineHeight: "1.8" }}>
+                                 <p style={{...s.p, textAlign: "left"}}>
+                                    Welcome to Mochaccino! Founded in 2024, we started as a small dream to create the most aesthetically pleasing and welcoming cafe community on Roblox.
+                                </p>
+                                <h3 style={{ color: theme.purple, marginTop: "30px" }}>Development Journey</h3>
+                                {/* ВСТАВИТЬ ВМЕСТО СТАРОГО ТЕКСТА В РАЗДЕЛЕ ABOUT */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
+            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.05)", borderLeft: `4px solid ${theme.accent}`, borderRadius: "0 15px 15px 0" }}>
+                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px" }}>March 2024</h4>
+                <p style={{ margin: 0, opacity: 0.7, fontSize: "14px" }}>Project V3 officially started. Concept phase and planning.</p>
+            </div>
+            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.05)", borderLeft: `4px solid ${theme.purple}`, borderRadius: "0 15px 15px 0" }}>
+                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px" }}>April 2024</h4>
+                <p style={{ margin: 0, opacity: 0.7, fontSize: "14px" }}>Web portal launch, Discord integration, and staff applications open.</p>
+            </div>
+            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.02)", borderLeft: `4px solid #555`, borderRadius: "0 15px 15px 0" }}>
+                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px", opacity: 0.5 }}>Summer 2024</h4>
+                <p style={{ margin: 0, opacity: 0.4, fontSize: "14px" }}>Grand Opening of the new Roblox Cafe layout.</p>
+            </div>
+        </div>
+                            </div>
                         </motion.div>
                     )}
 
@@ -237,48 +286,127 @@ export default function App() {
                 </motion.div>
             ))}
         </div>
+        {/* ВСТАВИТЬ В РАЗДЕЛ STAFF (ПОД СЕТКОЙ КАРТОЧЕК) */}
+        <div style={{ marginTop: "60px", padding: "40px", background: "rgba(168,85,247,0.1)", borderRadius: "30px", border: "1px solid rgba(168,85,247,0.3)", textAlign: "center", maxWidth: "800px", width: "100%" }}>
+            <h3 style={{ margin: "0 0 10px 0", fontSize: "28px", color: theme.text, fontFamily: "'Playfair Display', serif" }}>Join Our Family</h3>
+            <p style={{ opacity: 0.8, marginBottom: "25px", lineHeight: "1.6" }}>We are always looking for passionate baristas, security, and management. Start your journey with Mochaccino today!</p>
+            <a href="https://forms.gle/eiWDDY42wUKAKCgv6" target="_blank" rel="noreferrer" style={{ display: "inline-block", padding: "15px 35px", background: theme.purple, color: "#FFF", textDecoration: "none", borderRadius: "15px", fontWeight: "bold", fontSize: "14px", boxShadow: "0 10px 20px rgba(168,85,247,0.3)" }}>
+                Apply Now
+            </a>
+        </div>
     </motion.div>
 )}
 
                     {page === "events" && (
                         <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
                             <h2 style={s.pageTitle}>Calendar</h2>
+        
+                            {/* Кнопки переключения */}
+                             <div style={s.menuFilterWrap}>
+                                {["upcoming", "past"].map(tab => (
+                                    <div key={tab} style={s.filterBtn(eventTab === tab)} onClick={() => setEventTab(tab)}>
+                                     {tab.toUpperCase()}
+                                    </div>
+                                 ))}
+                            </div>
+
                             <div style={s.grid}>
-                                {eventsData.map(ev => (
-                                    <div key={ev.id} style={s.card}>
-                                        <span style={s.dateText}>
+                                {eventsData.filter(ev => {
+                                     // Проверяем, прошло ли мероприятие
+                                    const isPast = new Date(ev.iso).getTime() < new Date().getTime();
+                                     return eventTab === "past" ? isPast : !isPast;
+                                }).map(ev => (
+                                    <motion.div layout key={ev.id} style={s.card} onClick={() => setSelected(ev)}>
+                                         <span style={s.dateText}>
                                             {isMounted && localTimes[ev.id] ? `${localTimes[ev.id].date} • ${localTimes[ev.id].time}` : "..."}
                                         </span>
                                         <h3 style={s.cardTitle}>{ev.title}</h3>
-                                        <div style={s.badge}>{ev.loc}</div>
-                                        <p style={s.cardDesc}>{ev.desc}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
+                                         <div style={s.badge}>{ev.loc}</div>
+                                        {/* Описание скрыто в карточке, будет видно в модалке */}
+                                        <button style={s.cardBtn}>More Info</button>
+                                    </motion.div>
+                                 ))}
+                             </div>
+                            </motion.div>
+                        )}
 
                     {page === "alliances" && (
                         <motion.div key="alliances" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
                             <h2 style={s.pageTitle}>Partnerships</h2>
                             <div style={s.grid}>
                                 {alliancesData.map(al => (
-                                    <a key={al.id} href={al.link} target="_blank" rel="noreferrer" style={{...s.card, textDecoration: "none"}}>
+                                        <div key={al.id} style={s.card} onClick={() => setSelected(al)}>
                                         <div style={s.avatarWrap}>
                                             <div style={{...s.avatarInner, background: "white", color: "black", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center"}}>
                                                 LOGO
                                             </div>
                                         </div>
                                         <h3 style={s.cardTitle}>{al.name}</h3>
-                                        <p style={s.cardDesc}>{al.desc}</p>
-                                        <button style={{...s.cardBtn, background: theme.accent, border: "none"}}>Visit Group</button>
-                                    </a>
+                                        <div style={s.badge}>{al.role}</div>
+                                        <button style={s.cardBtn}>Read Info</button>
+                                    </div>
                                 ))}
                             </div>
                         </motion.div>
                     )}
+
+                    {page === "faq" && (
+                        <motion.div key="faq" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
+                             <h2 style={s.pageTitle}>FAQ</h2>
+        
+                            <div style={{ display: "flex", flexDirection: "column", gap: "15px", width: "100%", maxWidth: "800px" }}>
+                            {faqData.map((faq) => (
+                             <motion.div 
+                                key={faq.id} 
+                                style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden", cursor: "pointer" }}
+                                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                                layout
+                            >
+                    <div style={{ padding: "25px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <h3 style={{ margin: 0, color: theme.text, fontSize: "18px", fontFamily: "'Inter', sans-serif" }}>{faq.q}</h3>
+                        <motion.span 
+                            animate={{ rotate: openFaq === faq.id ? 45 : 0 }} 
+                            style={{ color: theme.accent, fontSize: "28px", fontWeight: "bold", display: "inline-block" }}
+                        >
+                            +
+                        </motion.span>
+                    </div>
+                    <AnimatePresence>
+                        {openFaq === faq.id && (
+                            <motion.div 
+                                initial={{ height: 0, opacity: 0 }} 
+                                animate={{ height: "auto", opacity: 1 }} 
+                                exit={{ height: 0, opacity: 0 }}
+                                style={{ padding: "0 25px 25px 25px" }}
+                            >
+                                <p style={{ margin: 0, color: theme.text, opacity: 0.7, lineHeight: 1.6 }}>{faq.a}</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            ))}
+        </div>
+    </motion.div>
+)}
+
                 </AnimatePresence>
+                
             </main>
+            {/* МУЗЫКАЛЬНЫЙ ПЛЕЕР (Вставляем над футером) */}
+            <div style={{ position: "fixed", bottom: "25px", left: "25px", zIndex: 90, borderRadius: "20px", overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", background: "#000" }}>
+                <iframe 
+                    width="260" 
+                    height="145" 
+                    src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0&controls=1" 
+                    title="Lofi Radio" 
+                    frameBorder="0" 
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                    style={{ display: "block", opacity: 0.8, transition: "opacity 0.3s" }}
+                    onMouseOver={(e) => e.currentTarget.style.opacity = "1"}
+                    onMouseOut={(e) => e.currentTarget.style.opacity = "0.8"}
+                ></iframe>
+            </div>
 
             <footer style={s.footer}>
                 © 2026 MOCHACCINO CAFE. ALL RIGHTS RESERVED. <br/>
@@ -314,12 +442,17 @@ export default function App() {
                                 <>
                                     <span style={s.socialTag}>🎮 {selected.roblox}</span>
                                     <span style={s.socialTag}>💬 {selected.discord}</span>
-                                 </>
+                                </>
                             )}
                             {selected.type === "event" && (
-                                 <span style={s.socialTag}>📍 {selected.loc}</span>
+                                <span style={s.socialTag}>📍 {selected.loc}</span>
                             )}
-                        </div>
+                                {selected.type === "alliance" && (
+                                <a href={selected.link} target="_blank" rel="noreferrer" style={{...s.socialTag, textDecoration: "none", background: theme.purple, color: "#FFF"}}>
+                                     🔗 Visit Roblox Group
+                                </a>
+                            )}
+</div>
                         </motion.div>
                     </motion.div>
                 )}
