@@ -67,7 +67,37 @@ export const s: any = {
         flexDirection: "column", alignItems: "center", 
         boxShadow: "0 0 30px rgba(168,85,247,0.1)", cursor: "pointer" 
     },
-    
+
+    toast: {
+    position: "fixed",
+    bottom: "30px",
+    right: "30px",
+    background: "rgba(111,78,55,0.9)",
+    backdropFilter: "blur(15px)",
+    padding: "20px 25px",
+    borderRadius: "25px",
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+    border: "1px solid rgba(255,255,255,0.1)",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    zIndex: 1000
+},
+radioPlayer: {
+    position: "fixed",
+    bottom: "25px",
+    left: "25px",
+    background: "rgba(0,0,0,0.6)",
+    backdropFilter: "blur(20px)",
+    padding: "15px 20px",
+    borderRadius: "20px",
+    border: "1px solid rgba(255,255,255,0.1)",
+    zIndex: 90,
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+}
+    ,
     menuIcon: { fontSize: "40px", marginBottom: "20px" },
     priceTag: { marginTop: "20px", padding: "8px 20px", background: "rgba(255,253,208,0.1)", borderRadius: "12px", color: "#FFFDD0", fontWeight: "900", fontSize: "14px" },
     avatarWrap: { position: "relative", width: "90px", height: "90px", marginBottom: "15px" },

@@ -5,8 +5,7 @@ export const theme = {
     purple: "#A855F7"
 }
 
-export const logo = "https://media.discordapp.net/attachments/1486791344721625322/1487442152157090003/nanaserver.png?ex=69cf16b4&is=69cdc534&hm=9afb6c107eec290f035646de526f26905f2a77986483cc8eadbc81ea57132850&=&format=webp&quality=lossless&width=1450&height=1450"
-
+export const logo = "/logo.png";
 export const navItems = ["home", "about", "staff", "menu", "events", "alliances", "faq"]
 
 export const menuData = [
@@ -50,3 +49,22 @@ export const faqData = [
     { id: "faq4", q: "Where can I report a rulebreaker?", a: "If you see someone breaking the rules in-game, please use the /report command or open a ticket in our Discord server with screenshot/video proof." },
     { id: "faq5", q: "When is the next major update?", a: "Our Development Team is currently working on V3! Keep an eye on our announcements channel for sneak peeks and release dates." }
 ]
+
+export const themes = {
+    dark: {
+        id: "dark",
+        bg: "#1a0f0d",
+        card: "rgba(255,255,255,0.06)",
+        text: "#FFFDD0",
+        accent: "#6F4E37",
+        glass: "linear-gradient(135deg, rgba(42,23,18,0.94) 0%, rgba(111,78,55,0.4) 100%)"
+    },
+    light: {
+        id: "light",
+        bg: "#FDF5E6", // Цвет слоновой кости
+        card: "rgba(111,78,55,0.08)",
+        text: "#4A2C2A", // Глубокий кофейный
+        accent: "#8B4513",
+        glass: "linear-gradient(135deg, rgba(255,252,240,0.9) 0%, rgba(210,180,140,0.4) 100%)"
+    }
+};

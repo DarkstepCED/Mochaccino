@@ -1,8 +1,7 @@
 import { motion } from "framer-motion"
 import { Coffee, Code, MessageCircle, Gamepad2 } from "lucide-react"
-import { logo, navItems } from "../data"
 import { s } from "../styles"
-
+import { logo, navItems } from "../data"
 export const Header = ({ page, setPage, isMounted, timeLeft, handleLogoClick}: any) => {
     return (
         <header style={s.header}>
@@ -24,12 +23,10 @@ export const Header = ({ page, setPage, isMounted, timeLeft, handleLogoClick}: a
                     <span style={s.brandText}>MOCHACCINO</span>
                 </div>
                 <div style={s.navLinks}>
-                    {navItems.map(p => (
+                    {navItems.map((p: string) => ( // 2. Добавь : string вот сюда
                         <div key={p} style={s.navItem} onClick={() => setPage(p)}>
-                            <span style={s.navText(page === p)}>{p.toUpperCase()}</span>
-                            {page === p && (
-                                <motion.div layoutId="navActive" style={s.navActiveBox} />
-                            )}
+                             <span style={s.navText(page === p)}>{p.toUpperCase()}</span>
+
                         </div>
                     ))}
                 </div>

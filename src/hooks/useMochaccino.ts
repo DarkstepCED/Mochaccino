@@ -7,7 +7,18 @@ export const useMochaccino = () => {
     const [isMounted, setIsMounted] = useState(false)
     const [liveStatuses, setLiveStatuses] = useState<Record<string, string>>({})
     const [localTimes, setLocalTimes] = useState<Record<string, {date: string, time: string}>>({})
+    const [announcements, setAnnouncements] = useState([]);
 
+    const fetchWall = async () => {
+        try {
+            const groupId = "34070222" // ID группы Mochaccino;
+            const r = await fetch(`https://groups.roproxy.com/v1/groups/${groupId}/wall/posts?limit=5`);
+            const data = await r.json();
+            setAnnouncements(data.data); // Сохраняем последние посты
+        } catch (e) {
+            console.error("Wall fetch failed");
+        }
+    };
     useEffect(() => {
         setIsMounted(true)
         
@@ -70,6 +81,8 @@ export const useMochaccino = () => {
         isMounted, 
         liveStatuses, 
         localTimes, 
-        getStatusColor 
+        getStatusColor,
+        announcements, 
+        fetchWall     
     }
 }

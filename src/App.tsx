@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react"
-import { AnimatePresence } from "framer-motion"
-import confetti from 'canvas-confetti'
-
-// Импортируем наши чистые компоненты и страницы
-import { Header } from "./components/Header"
+import { motion, AnimatePresence } from "framer-motion"
 import { Modal } from "./components/Modal"
 import { Home } from "./pages/Home"
 import { About } from "./pages/About"
@@ -12,22 +8,77 @@ import { Menu } from "./pages/Menu"
 import { Events } from "./pages/Events"
 import { Alliances } from "./pages/Alliances"
 import { FAQ } from "./pages/FAQ"
-
+import { theme, themes} from "./data"
+import confetti from 'canvas-confetti' // Решает ошибку с 'confetti'
+import { Header } from "./components/Header" // Решает ошибку с 'Header'
 // Импортируем логику, данные и стили
 import { useMochaccino } from "./hooks/useMochaccino"
-import { theme } from "./data"
 import { s } from "./styles"
+
 import type { ModalItem } from "./types"
 
 export default function App() {
     // 1. Вся тяжелая логика (таймеры, дискорд-статусы) теперь спрятана в хуке
     const { isMounted, timeLeft, liveStatuses, localTimes, getStatusColor } = useMochaccino()
+    const [currentTheme, setCurrentTheme] = useState(themes.dark);
 
+// Добавь это в return внутри <div style={...}>
+// Чтобы фон менялся динамически:
+<div style={{...s.root, backgroundColor: currentTheme.bg, color: currentTheme.text}}></div>
+
+    const [showToast, setShowToast] = useState(false);
+
+useEffect(() => {
+    const timer = setTimeout(() => setShowToast(true), 3000); // Показать через 3 сек
+    return () => clearTimeout(timer);
+}, []);
+
+// В JSX (внизу, перед закрывающим </div>):
+<AnimatePresence>
+    {showToast && (
+        <motion.div 
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 300, opacity: 0 }}
+            style={s.toast}
+        >
+            {/* Сама ссылка на анкету */}
+            <a 
+                href="https://forms.gle/eiWDDY42wUKAKCgv6" // Твоя ссылка из раздела Staff
+                target="_blank" 
+                rel="noreferrer"
+                style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', color: 'inherit' }}
+                onClick={() => setShowToast(false)} // Закрываем тост после клика
+            >
+                <div style={{fontSize: '24px'}}>☕</div>
+                <div>
+                    <b style={{display: 'block', color: currentTheme.text}}>Набор открыт!</b>
+                    <span style={{fontSize: '12px', opacity: 0.8, color: currentTheme.text}}>
+                        Нажми, чтобы подать заявку в Staff
+                    </span>
+                </div>
+            </a>
+
+            {/* Кнопка закрытия (чтобы просто убрать уведомление) */}
+            <button 
+                onClick={(e) => {
+                    e.stopPropagation(); // Важно: чтобы клик по крестику не открывал ссылку
+                    setShowToast(false);
+                }} 
+                style={s.toastClose}
+            >
+                ×
+            </button>
+        </motion.div>
+    )}
+</AnimatePresence>
     // 2. Состояние навигации и модалки
     const [page, setPage] = useState("home")
     const [selected, setSelected] = useState<ModalItem | null>(null)
     const [logoClicks, setLogoClicks] = useState(0)
-
+    const toggleTheme = () => {
+        setCurrentTheme(currentTheme.id === "dark" ? themes.light : themes.dark);
+        };
     // 3. Пасхалка и приветствие в консоли
     useEffect(() => {
         console.log(
@@ -74,7 +125,9 @@ export default function App() {
                 setPage={setPage} 
                 isMounted={isMounted} 
                 timeLeft={timeLeft} 
-                handleLogoClick={handleLogoClick} 
+                handleLogoClick={handleLogoClick}
+                toggleTheme={toggleTheme}     // ВОТ ЭТО решает ошибку toggleTheme
+                currentTheme={currentTheme}
             />
 
             {/* Основной контент (переключение страниц) */}
@@ -92,7 +145,21 @@ export default function App() {
 
             {/* Музыкальный плеер */}
             <div style={{ position: "fixed", bottom: "25px", left: "25px", zIndex: 90, borderRadius: "20px", overflow: "hidden", background: "#000" }}>
-                <iframe width="260" height="145" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="Lofi Radio" frameBorder="0" allowFullScreen style={{ display: "block", opacity: 0.8 }}></iframe>
+                <div style={s.radioPlayer}>
+                    <div style={s.radioInfo}>
+                        <div style={s.radioDot} />
+                        <span>LOFI RADIO — 24/7 AESTHETIC BEATS</span>
+                    </div>
+                <iframe 
+                    width="0" height="0" 
+                    src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1" 
+                    style={{ position: "absolute", pointerEvents: "none", opacity: 0 }}
+                />
+                <div style={s.radioControls}>
+                    <button style={s.radioBtn}>PAUSE</button>
+                    <input type="range" style={s.volumeSlider} />
+                </div>
+</div>
             </div>
 
             {/* Футер */}
