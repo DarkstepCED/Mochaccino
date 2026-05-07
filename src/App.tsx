@@ -1,411 +1,93 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { theme } from "./data"
+import { Modal } from "./components/Modal"
+import { Header } from "./components/Header"
+import type { ModalItem } from "./types"
+import { Home } from "./pages/Home"
+import { Menu } from "./pages/Menu"
+import { Staff } from "./pages/Staff"
+import { About } from "./pages/About"
+import { FAQ } from "./pages/FAQ"
+import { Events } from "./pages/Events"
+import { Alliances } from "./pages/Alliances"
+import { useMochaccino } from "./hooks/useMochaccino"
+import { s } from "./styles"
+import confetti from 'canvas-confetti';
 
 export default function App() {
+    // --- СОСТОЯНИЕ (STATE) ---
+    // 1. Приветствие в консоли (сработает 1 раз при загрузке)
+useEffect(() => {
+    console.log(
+        "%c☕ MOCHACCINO V3 %cBuilt with a passion for coding. Hello, developer!", 
+        "color: #6F4E37; font-size: 20px; font-weight: bold; font-family: serif;", 
+        "color: #FFFDD0; font-size: 14px;"
+    );
+}, []);
+
+// 2. Логика пасхалки
+const [logoClicks, setLogoClicks] = useState(0);
+
+const handleLogoClick = () => {
+    const newCount = logoClicks + 1;
+    setLogoClicks(newCount);
+
+    if (newCount === 10) {
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#6F4E37', '#A855F7', '#FFFDD0']
+        });
+        setLogoClicks(0); // Сброс счетчика
+        console.log("🎉 EASTER EGG UNLOCKED!");
+    }
+};
     const [page, setPage] = useState("home")
-    const [selected, setSelected] = useState<any>(null)
-    const [menuTab, setMenuTab] = useState("all")
-    const [staffTab, setStaffTab] = useState("all")
-    const [timeLeft, setTimeLeft] = useState("CALCULATING...")
-    const [isMounted, setIsMounted] = useState(false)
-    const [eventTab, setEventTab] = useState("upcoming")
-    const [openFaq, setOpenFaq] = useState<string | null>(null)
-    const [liveStatuses, setLiveStatuses] = useState<Record<string, string>>({})
-    const [localTimes, setLocalTimes] = useState<Record<string, {date: string, time: string}>>({})
-
-    const theme = {
-        accent: "#6F4E37", 
-        text: "#FFFDD0",   
-        dark: "#1a0f0d",   
-        purple: "#A855F7"
-    }
-
-    const logo = "logo.png" // Путь к вашему логотипу
-    const navItems = ["home", "about","staff", "menu", "events", "alliances", "faq"]
-
-    const menuData = [
-        { id: "m1", category: "desserts", name: "Classic Tiramisu", desc: "Layers of espresso ladyfingers and mascarpone cream.", price: "55 R$" },
-        { id: "m2", category: "main", name: "Mochaccino Signature", desc: "Secret blend of chocolate, espresso, and milk.", price: "40 R$" },
-        { id: "m3", category: "desserts", name: "Velvet Macarons", desc: "Assorted flavors including Salted Caramel.", price: "30 R$" },
-        { id: "m4", category: "secret", name: "The Golden Bean", desc: "Exclusive brew with honey cream and gold flakes.", price: "99 R$" },
-        { id: "m5", category: "main", name: "Espresso Romano", desc: "Strong espresso served with a fresh lemon slice.", price: "25 R$" },
-        { id: "m6", category: "secret", name: "Midnight Nebula", desc: "Cold brew with charcoal-blackberry and star glitter.", price: "75 R$" },
-    ]
-
-    const staffList = [
-    { id: "755771099668676739", type: "staff", team: "Presidential Team", name: "Nana", role: "Owner", roblox: "nanax_xo", discord: "nanaxxo", bio: "Overseeing all operations with love.", image: "Nana.png"},
-    { id: "848369546717036564", type: "staff",team: "Presidential Team", name: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆", role: "Co-Owner", roblox: "catca54t", discord: ".xjen.", bio: "Guardian of community safety.", image: "゛𝙒𝙞𝙛𝙞𝙚𝙨 ⸝⸝.ᐟ⋆.png"},
-    { id: "980557222142689290", type: "staff", team: "Presidential Team", name: "Carlz_Panda", role: "President", roblox: "Carlz_Panda", discord: "carly_xox", bio: "Guardian of community safety.", image: "Carlz_Panda.png"},
-    { id: "1193113047078801438", type: "staff", team: "Presidential Team", name: "sharky", role: "President", roblox: "Pizzaboyjack5", discord: "pizzaboyjack5", bio: "Guardian of community safety.", image: "sharky.png"},
-    { id: "1130075748946944051", type: "staff", team: "Presidential Team", name: "LeiAdores", role: "Vice President", roblox: "lhunt55", discord: "lhunt55", bio: "Guardian of community safety.", image: "LeiAdores.png"},
-    { id: "985444871722631199", type: "staff", team: "Presidential Team", name: "SaD", role: "Vice President", roblox: "seejedsajjoida", discord: "ts_122", bio: "Guardian of community safety.", image: "SaD.png"},
-
-    { id: "1186115875028357273", type: "staff", team: "Development Team", name: "MADD", role: "Developer", roblox: "-", discord: "powerislife", bio: "Shell team logic.", image: "MADD.png" },
-    { id: "671342529828093952", type: "staff", team: "Development Team", name: "philip", role: "Developer", roblox: "-", discord: "ibimsderphilip", bio: "Shell team logic.", image: "philip.png" },
-    { id: "1061318604227891240", type: "staff", team: "Development Team", name: "AzureWrath", role: "Developer", roblox: "-", discord: "imjustrockylol", bio: "Shell team logic.", image: "AzureWrath.png" },
-
-    { id: "803581244452896788", type: "staff", team: "Chief of Public Relations", name: "TiaAdores", role: "Chief of Public Relations", roblox: "patriziaa_xx", discord: "patriziaa", bio: "Shell team logic.", image: "Patriziaa.png" },
-    { id: "1222193133308084388", type: "staff", team: "Chief of Public Relations", name: "イーサン", role: "Chief of Public Relations", roblox: "VoidLatteRblx", discord: "officialvoidlatte.exe", bio: "Shell team logic.", image: "OfficialVoidLatte.png" },
-
-    { id: "671746748703571990", type: "staff", team: "Chief Executive Director", name: "Darkstep", role: "Chief Executive Director", roblox: "boyhy1562", discord: "darkstep5766", bio: "World traveler.", image: "Darkstep.png" },
-    { id: "1093471267878875206", type: "staff", team: "Chief Executive Director", name: "Avionyxx", role: "Chief Executive Director", roblox: "Avionyxx", discord: "avionyxx_official", bio: "World traveler.", image: "Avionyxx.png" }
-    ]
-
-    const eventsData = [
-        { id: "ev1", type: "event", title: "Grand Opening", iso: "2026-04-15T18:00:00Z", loc: "Main Cafe", desc: "Massive official launch party with free items!" },
-    ]
-
-    const faqData = [
-    { id: "faq1", q: "How can I become a staff member?", a: "We host interviews every weekend at our Training Center. Join our Discord server to check the exact schedule and requirements!" },
-    { id: "faq2", q: "Are there any age or account requirements?", a: "Yes, your Roblox account must be at least 30 days old to join our staff team. We expect maturity and professionalism from all our baristas." },
-    { id: "faq3", q: "Can I partner my group with Mochaccino?", a: "Absolutely! We love making new alliances. Head over to our Discord and open a Partnership ticket to speak with our Public Relations team." },
-    { id: "faq4", q: "Where can I report a rulebreaker?", a: "If you see someone breaking the rules in-game, please use the /report command or open a ticket in our Discord server with screenshot/video proof." },
-    { id: "faq5", q: "When is the next major update?", a: "Our Development Team is currently working on V3! Keep an eye on our announcements channel for sneak peeks and release dates." }
-    ]
-
-    const alliancesData = [
-        { id: "al1", type: "alliance", name: "Bloxy Community", role: "Main Partner", desc: "Event hosting community.", link: "https://www.roblox.com/groups/" },
-        { id: "al2", type: "alliance", name: "Star Studio", role: "Developer Ally", desc: "Official developers.", link: "https://www.roblox.com/groups/" },
-    ]
-
+    const [selected, setSelected] = useState<ModalItem | null>(null)
+    const { timeLeft, isMounted, liveStatuses, localTimes, getStatusColor } = useMochaccino()
     useEffect(() => {
-        setIsMounted(true)
-        const times: Record<string, {date: string, time: string}> = {}
-        eventsData.forEach(e => {
-            const d = new Date(e.iso)
-            times[e.id] = {
-                date: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-                time: d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-            }
-        })
-        setLocalTimes(times)
-
-        const timer = setInterval(() => {
-            const d = new Date("2026-04-15T18:00:00Z").getTime() - new Date().getTime()
-            if (d < 0) setTimeLeft("WE ARE OPEN!")
-            else {
-                const days = Math.floor(d / 86400000)
-                const hours = Math.floor((d % 86400000) / 3600000)
-                const mins = Math.floor((d % 3600000) / 60000)
-                const secs = Math.floor((d % 60000) / 1000)
-                setTimeLeft(`${days}d ${hours}h ${mins}m ${secs}s`)
-            }
-        }, 1000)
-
-        const fetchStatus = async () => {
-            try {
-                const newStats = { ...liveStatuses }
-                for (const m of staffList) {
-                    if (m.id.length > 10) {
-                        const r = await fetch(`https://api.lanyard.rest/v1/users/${m.id}`)
-                        const data = await r.json()
-                        if (data.success) newStats[m.id] = data.data.discord_status
-                    }
-                }
-                setLiveStatuses(newStats)
-            } catch (e) {}
-        }
-        fetchStatus()
-        const sInt = setInterval(fetchStatus, 30000)
-        return () => { clearInterval(timer); clearInterval(sInt); }
-    }, [])
-
-    const getStatusColor = (id: string) => {
-        const s = liveStatuses[id]
-        if (s === "online") return "#43b581"
-        if (s === "idle") return "#faa61a"
-        if (s === "dnd") return "#f04747"
-        return "#747f8d"
-    }
-
+    console.log(
+        "%c☕ MOCHACCINO V3 %cBuilt with a passion for coding. Hello, developer!", 
+        "color: #6F4E37; font-size: 20px; font-weight: bold; font-family: serif;", 
+        "color: #FFFDD0; font-size: 14px;"
+    );
+}, []);
+    // --- ВЕРСТКА (JSX) ---
     return (
         <div style={s.root}>
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;600;800&display=swap');
-                
-                html, body { 
-                    margin: 0; 
-                    padding: 0; 
-                    min-height: 100vh; 
-                    background-color: #1a0f0d; 
-                    font-family: 'Inter', sans-serif;
-                    color: #FFFDD0;
-                    overflow-x: hidden;
-                }
-                
+                html, body { margin: 0; padding: 0; min-height: 100vh; background-color: #1a0f0d; font-family: 'Inter', sans-serif; color: #FFFDD0; overflow-x: hidden; }
                 * { box-sizing: border-box; }
                 ::-webkit-scrollbar { width: 8px; }
                 ::-webkit-scrollbar-thumb { background: #6F4E37; border-radius: 10px; }
             `}</style>
 
-            {/* ВЕРНУЛИ НАШ СТЕКЛЯННЫЙ ФОН */}
             <div style={s.bgContainer}>
                 <div style={s.bgImage} />
                 <div style={s.bgGlass} />
-                <motion.div 
-                    animate={{ x: [0, 80, 0], opacity: [0.2, 0.4, 0.2] }} 
-                    transition={{ duration: 25, repeat: Infinity }} 
-                    style={s.blob} 
-                />
+                <motion.div animate={{ x: [0, 80, 0], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 25, repeat: Infinity }} style={s.blob} />
             </div>
 
-            <header style={s.header}>
-                <div style={s.timerBar}>
-                    ☕ MOCHACCINO OPENING: {isMounted ? timeLeft : "..."} ☕
-                </div>
-                <nav style={s.navBar}>
-                    <div style={s.logoWrap} onClick={() => setPage("home")}>
-                        <motion.img whileHover={{ rotate: 180 }} src={logo} style={s.miniLogo} />
-                        <span style={s.brandText}>MOCHACCINO</span>
-                    </div>
-                    <div style={s.navLinks}>
-                        {navItems.map(p => (
-                            <div key={p} style={s.navItem} onClick={() => setPage(p)}>
-                                <span style={s.navText(page === p)}>{p.toUpperCase()}</span>
-                                {page === p && (
-                                    <motion.div 
-                                        layoutId="navActive" 
-                                        style={s.navActiveBox} 
-                                        transition={{ type: "spring", stiffness: 400, damping: 30 }} 
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                    <div style={s.navBtns}>
-                        <a href="#" style={s.btnLight}>DISCORD</a>
-                        <a href="#" style={s.btnDark}>ROBLOX</a>
-                    </div>
-                </nav>
-            </header>
+            <Header page={page} setPage={setPage} isMounted={isMounted} timeLeft={timeLeft} handleLogoClick={handleLogoClick}/>
 
             <main style={s.mainContent}>
                 <AnimatePresence mode="wait">
-                    {page === "home" && (
-                        <motion.div key="home" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={s.page}>
-                            <div style={s.heroCard}>
-                                <img src={logo} style={s.heroLogo} />
-                                <h1 style={s.h1}>Aesthetically <br/> Brewed.</h1>
-                                <p style={s.p}>Where every cup is a masterpiece and every guest is family.</p>
-                                <button onClick={() => setPage("menu")} style={s.ctaButton}>View Menu</button>
-                            </div>
-                            <div style={{ display: "flex", gap: "20px", marginTop: "40px", flexWrap: "wrap", justifyContent: "center" }}>
-                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
-                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>10K+</h3>
-                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>MEMBERS</span>
-                                </div>
-                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
-                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>24/7</h3>
-                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>ACTIVE</span>
-                                </div>
-                                <div style={{ padding: "20px 40px", background: "rgba(255,255,255,0.05)", borderRadius: "20px", backdropFilter: "blur(10px)" }}>
-                                    <h3 style={{ margin: 0, color: theme.text, fontSize: "24px" }}>V3</h3>
-                                    <span style={{ fontSize: "12px", opacity: 0.6, letterSpacing: "2px" }}>VERSION</span>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {page === "about" && (
-                        <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                            <h2 style={s.pageTitle}>Our Story</h2>
-                            <div style={{ maxWidth: "800px", background: "rgba(255,255,255,0.04)", padding: "40px", borderRadius: "30px", border: "1px solid rgba(255,255,255,0.1)", textAlign: "left", lineHeight: "1.8" }}>
-                                 <p style={{...s.p, textAlign: "left"}}>
-                                    Welcome to Mochaccino! Founded in 2024, we started as a small dream to create the most aesthetically pleasing and welcoming cafe community on Roblox.
-                                </p>
-                                <h3 style={{ color: theme.purple, marginTop: "30px" }}>Development Journey</h3>
-                                {/* ВСТАВИТЬ ВМЕСТО СТАРОГО ТЕКСТА В РАЗДЕЛЕ ABOUT */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
-            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.05)", borderLeft: `4px solid ${theme.accent}`, borderRadius: "0 15px 15px 0" }}>
-                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px" }}>March 2024</h4>
-                <p style={{ margin: 0, opacity: 0.7, fontSize: "14px" }}>Project V3 officially started. Concept phase and planning.</p>
-            </div>
-            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.05)", borderLeft: `4px solid ${theme.purple}`, borderRadius: "0 15px 15px 0" }}>
-                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px" }}>April 2024</h4>
-                <p style={{ margin: 0, opacity: 0.7, fontSize: "14px" }}>Web portal launch, Discord integration, and staff applications open.</p>
-            </div>
-            <div style={{ padding: "15px 25px", background: "rgba(255,255,255,0.02)", borderLeft: `4px solid #555`, borderRadius: "0 15px 15px 0" }}>
-                <h4 style={{ margin: "0 0 5px 0", color: theme.text, fontSize: "18px", opacity: 0.5 }}>Summer 2024</h4>
-                <p style={{ margin: 0, opacity: 0.4, fontSize: "14px" }}>Grand Opening of the new Roblox Cafe layout.</p>
-            </div>
-        </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {page === "menu" && (
-                        <motion.div key="menu" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                            <h2 style={s.pageTitle}>Our Menu</h2>
-                            <div style={s.menuFilterWrap}>
-                                {["all", "main", "desserts", "secret"].map(tab => (
-                                    <div key={tab} style={s.filterBtn(menuTab === tab)} onClick={() => setMenuTab(tab)}>
-                                        {tab.toUpperCase()}
-                                    </div>
-                                ))}
-                            </div>
-                            <div style={s.grid}>
-                                {menuData.filter(i => menuTab === "all" || i.category === menuTab).map(item => (
-                                    <motion.div layout key={item.id} style={item.category === "secret" ? s.secretCard : s.card}>
-                                        <div style={s.menuIcon}>{item.category === "secret" ? "✨" : "☕"}</div>
-                                        <h3 style={s.cardTitle}>{item.name}</h3>
-                                        <p style={s.cardDesc}>{item.desc}</p>
-                                        <div style={s.priceTag}>{item.price}</div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {page === "staff" && (
-    <motion.div key="staff" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-        <h2 style={s.pageTitle}>Elite Team</h2>
-
-        {/* НОВЫЙ БЛОК: Кнопки фильтров (Вкладки) */}
-        <div style={s.menuFilterWrap}>
-            {/* Сюда впиши те названия команд, которые хочешь видеть на кнопках */}
-            {["All", "Presidential Team", "Development Team", "Chief Executive Director", "Chief of Public Relations"].map(tab => (
-                <div key={tab} style={s.filterBtn(staffTab === tab)} onClick={() => setStaffTab(tab)}>
-                    {tab.toUpperCase()}
-                </div>
-            ))}
-        </div>
-
-        {/* ИЗМЕНЕННЫЙ БЛОК: Сортировка карточек по команде + плавная анимация (layout) */}
-        <div style={s.grid}>
-            {staffList.filter(m => staffTab === "all" || m.team === staffTab).map(m => (
-                <motion.div layout key={m.id} style={s.card} onClick={() => setSelected(m)}>
-                    <div style={s.avatarWrap}>
-                        <div style={s.avatarInner}>
-                            {m.image ? <img src={m.image} style={s.imgFull} /> : "☕"}
-                        </div>
-                        <div style={{...s.statusDot, background: getStatusColor(m.id)}} />
-                    </div>
-                    <h3 style={s.cardTitle}>{m.name}</h3>
-                    <div style={s.badge}>{m.role}</div>
-                    <button style={s.cardBtn}>Read Bio</button>
-                </motion.div>
-            ))}
-        </div>
-        {/* ВСТАВИТЬ В РАЗДЕЛ STAFF (ПОД СЕТКОЙ КАРТОЧЕК) */}
-        <div style={{ marginTop: "60px", padding: "40px", background: "rgba(168,85,247,0.1)", borderRadius: "30px", border: "1px solid rgba(168,85,247,0.3)", textAlign: "center", maxWidth: "800px", width: "100%" }}>
-            <h3 style={{ margin: "0 0 10px 0", fontSize: "28px", color: theme.text, fontFamily: "'Playfair Display', serif" }}>Join Our Family</h3>
-            <p style={{ opacity: 0.8, marginBottom: "25px", lineHeight: "1.6" }}>We are always looking for passionate baristas, security, and management. Start your journey with Mochaccino today!</p>
-            <a href="https://forms.gle/eiWDDY42wUKAKCgv6" target="_blank" rel="noreferrer" style={{ display: "inline-block", padding: "15px 35px", background: theme.purple, color: "#FFF", textDecoration: "none", borderRadius: "15px", fontWeight: "bold", fontSize: "14px", boxShadow: "0 10px 20px rgba(168,85,247,0.3)" }}>
-                Apply Now
-            </a>
-        </div>
-    </motion.div>
-)}
-
-                    {page === "events" && (
-                        <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                            <h2 style={s.pageTitle}>Calendar</h2>
-        
-                            {/* Кнопки переключения */}
-                             <div style={s.menuFilterWrap}>
-                                {["upcoming", "past"].map(tab => (
-                                    <div key={tab} style={s.filterBtn(eventTab === tab)} onClick={() => setEventTab(tab)}>
-                                     {tab.toUpperCase()}
-                                    </div>
-                                 ))}
-                            </div>
-
-                            <div style={s.grid}>
-                                {eventsData.filter(ev => {
-                                     // Проверяем, прошло ли мероприятие
-                                    const isPast = new Date(ev.iso).getTime() < new Date().getTime();
-                                     return eventTab === "past" ? isPast : !isPast;
-                                }).map(ev => (
-                                    <motion.div layout key={ev.id} style={s.card} onClick={() => setSelected(ev)}>
-                                         <span style={s.dateText}>
-                                            {isMounted && localTimes[ev.id] ? `${localTimes[ev.id].date} • ${localTimes[ev.id].time}` : "..."}
-                                        </span>
-                                        <h3 style={s.cardTitle}>{ev.title}</h3>
-                                         <div style={s.badge}>{ev.loc}</div>
-                                        {/* Описание скрыто в карточке, будет видно в модалке */}
-                                        <button style={s.cardBtn}>More Info</button>
-                                    </motion.div>
-                                 ))}
-                             </div>
-                            </motion.div>
-                        )}
-
-                    {page === "alliances" && (
-                        <motion.div key="alliances" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                            <h2 style={s.pageTitle}>Partnerships</h2>
-                            <div style={s.grid}>
-                                {alliancesData.map(al => (
-                                        <div key={al.id} style={s.card} onClick={() => setSelected(al)}>
-                                        <div style={s.avatarWrap}>
-                                            <div style={{...s.avatarInner, background: "white", color: "black", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                                LOGO
-                                            </div>
-                                        </div>
-                                        <h3 style={s.cardTitle}>{al.name}</h3>
-                                        <div style={s.badge}>{al.role}</div>
-                                        <button style={s.cardBtn}>Read Info</button>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {page === "faq" && (
-                        <motion.div key="faq" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={s.page}>
-                             <h2 style={s.pageTitle}>FAQ</h2>
-        
-                            <div style={{ display: "flex", flexDirection: "column", gap: "15px", width: "100%", maxWidth: "800px" }}>
-                            {faqData.map((faq) => (
-                             <motion.div 
-                                key={faq.id} 
-                                style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden", cursor: "pointer" }}
-                                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-                                layout
-                            >
-                    <div style={{ padding: "25px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ margin: 0, color: theme.text, fontSize: "18px", fontFamily: "'Inter', sans-serif" }}>{faq.q}</h3>
-                        <motion.span 
-                            animate={{ rotate: openFaq === faq.id ? 45 : 0 }} 
-                            style={{ color: theme.accent, fontSize: "28px", fontWeight: "bold", display: "inline-block" }}
-                        >
-                            +
-                        </motion.span>
-                    </div>
-                    <AnimatePresence>
-                        {openFaq === faq.id && (
-                            <motion.div 
-                                initial={{ height: 0, opacity: 0 }} 
-                                animate={{ height: "auto", opacity: 1 }} 
-                                exit={{ height: 0, opacity: 0 }}
-                                style={{ padding: "0 25px 25px 25px" }}
-                            >
-                                <p style={{ margin: 0, color: theme.text, opacity: 0.7, lineHeight: 1.6 }}>{faq.a}</p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
-            ))}
-        </div>
-    </motion.div>
-)}
+                    {page === "home" && <Home setPage={setPage} />}
+                    {page === "about" && <About />}
+                    {page === "menu" && <Menu />}
+                    {page === "staff" && <Staff setSelected={setSelected} getStatusColor={getStatusColor} />}
+                    {page === "faq" && <FAQ />}
+                    {page === "events" && <Events setSelected={setSelected} localTimes={localTimes} isMounted={isMounted} />}
+                    {page === "alliances" && <Alliances setSelected={setSelected} />}
 
                 </AnimatePresence>
-                
             </main>
-            {/* МУЗЫКАЛЬНЫЙ ПЛЕЕР (Вставляем над футером) */}
-            <div style={{ position: "fixed", bottom: "25px", left: "25px", zIndex: 90, borderRadius: "20px", overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", background: "#000" }}>
-                <iframe 
-                    width="260" 
-                    height="145" 
-                    src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0&controls=1" 
-                    title="Lofi Radio" 
-                    frameBorder="0" 
-                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowFullScreen
-                    style={{ display: "block", opacity: 0.8, transition: "opacity 0.3s" }}
-                    onMouseOver={(e) => e.currentTarget.style.opacity = "1"}
-                    onMouseOut={(e) => e.currentTarget.style.opacity = "0.8"}
-                ></iframe>
+
+            <div style={{ position: "fixed", bottom: "25px", left: "25px", zIndex: 90, borderRadius: "20px", overflow: "hidden", background: "#000" }}>
+                <iframe width="260" height="145" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="Lofi Radio" frameBorder="0" allowFullScreen style={{ display: "block", opacity: 0.8 }}></iframe>
             </div>
 
             <footer style={s.footer}>
@@ -414,474 +96,13 @@ export default function App() {
             </footer>
 
             <AnimatePresence>
-                {selected && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={s.overlay} onClick={() => setSelected(null)}>
-                        <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} onClick={e => e.stopPropagation()} style={s.modal}>
-                            <button onClick={() => setSelected(null)} style={s.closeBtn}>×</button>
-                            <div style={s.modalHeader}>
-                                <div style={s.mAvatarWrap}>
-                                    <div style={s.mAvatarInner}>
-                                        {selected.image ? <img src={selected.image} style={s.imgFull} /> : "☕"}
-                                    </div>
-                                    {selected.type === "staff" && (
-                                        <div style={{...s.mStatusDot, background: getStatusColor(selected.id)}} />
-                                    )}
-                                </div>
-                                <div style={{textAlign: 'left'}}>
-                                    <h2 style={s.mTitle}>{selected.name || selected.title}</h2>
-                                    {selected.type === "staff" && (
-                                        <div style={{color: getStatusColor(selected.id), fontSize: '12px', fontWeight: 'bold'}}>
-                                            {liveStatuses[selected.id] || "OFFLINE"}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <p style={s.mBio}>{selected.bio || selected.desc}</p>
-                        <div style={s.socialRow}>
-                            {selected.type === "staff" && (
-                                <>
-                                    <span style={s.socialTag}>🎮 {selected.roblox}</span>
-                                    <span style={s.socialTag}>💬 {selected.discord}</span>
-                                </>
-                            )}
-                            {selected.type === "event" && (
-                                <span style={s.socialTag}>📍 {selected.loc}</span>
-                            )}
-                                {selected.type === "alliance" && (
-                                <a href={selected.link} target="_blank" rel="noreferrer" style={{...s.socialTag, textDecoration: "none", background: theme.purple, color: "#FFF"}}>
-                                     🔗 Visit Roblox Group
-                                </a>
-                            )}
-</div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+    <Modal 
+        selected={selected} 
+        setSelected={setSelected} 
+        liveStatus={liveStatuses[selected?.id || ""]} 
+        statusColor={getStatusColor(selected?.id || "")}
+    />
+</AnimatePresence>
         </div>
     )
-}
-
-const s: any = {
-    root: { 
-        display: "flex", 
-        flexDirection: "column", 
-        minHeight: "100vh", 
-        position: "relative" 
-    },
-    
-    // ВЕРНУЛИ КОНТЕЙНЕР ДЛЯ ФОНА
-    bgContainer: { 
-        position: "fixed", 
-        inset: 0, 
-        zIndex: -1, 
-        pointerEvents: "none", 
-        overflow: "hidden" 
-    },
-    bgImage: { 
-        position: "absolute", 
-        inset: "-50px", // Скрывает белые края от размытия
-        backgroundImage: "url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=2000')", 
-        backgroundSize: "cover", 
-        backgroundPosition: "center", 
-        filter: "brightness(0.35) blur(30px)" // ВЕРНУЛИ СИЛЬНОЕ РАЗМЫТИЕ
-    },
-    bgGlass: { 
-        position: "absolute", 
-        inset: 0, 
-        background: "linear-gradient(135deg, rgba(42,23,18,0.94) 0%, rgba(111,78,55,0.4) 100%)", 
-        backdropFilter: "blur(40px)" 
-    },
-    blob: { 
-        position: "absolute", 
-        top: "10%", 
-        left: "20%", 
-        width: "700px", 
-        height: "700px", 
-        background: "radial-gradient(circle, rgba(111,78,55,0.4) 0%, transparent 70%)", 
-        filter: "blur(120px)" 
-    },
-
-    header: { 
-        position: "fixed", 
-        top: 0, 
-        width: "100%", 
-        zIndex: 50 
-    },
-    timerBar: { 
-        width: "100%", 
-        background: "#6F4E37", 
-        color: "#FFFDD0", 
-        textAlign: "center", 
-        padding: "10px", 
-        fontSize: "11px", 
-        fontWeight: "bold", 
-        letterSpacing: "2px" 
-    },
-    navBar: { 
-        margin: "15px 30px", 
-        height: "80px", 
-        background: "rgba(255,255,255,0.06)", 
-        backdropFilter: "blur(20px)", 
-        WebkitBackdropFilter: "blur(20px)", 
-        borderRadius: "25px", 
-        border: "1px solid rgba(255,255,255,0.1)", 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        padding: "0 30px" 
-    },
-    logoWrap: { 
-        display: "flex", 
-        alignItems: "center", 
-        gap: "15px", 
-        cursor: "pointer" 
-    },
-    miniLogo: { 
-        width: "40px", 
-        height: "40px", 
-        borderRadius: "50%", 
-        border: "2px solid #6F4E37", 
-        backgroundColor: "#fff" 
-    },
-    brandText: { 
-        fontFamily: "'Playfair Display', serif", 
-        fontSize: "20px", 
-        fontWeight: "bold", 
-        color: "#FFFDD0" 
-    },
-    navLinks: { 
-        display: "flex", 
-        gap: "5px" 
-    },
-    navItem: { 
-        position: "relative", 
-        padding: "12px 20px", 
-        cursor: "pointer" 
-    },
-    navText: (active: boolean) => ({ 
-        color: active ? "#FFFDD0" : "rgba(255,253,208,0.5)", 
-        fontSize: "12px", 
-        fontWeight: "bold", 
-        position: "relative", 
-        zIndex: 2 
-    }),
-    navActiveBox: { 
-        position: "absolute", 
-        inset: "5px", 
-        background: "rgba(255,255,255,0.1)", 
-        borderRadius: "15px", 
-        zIndex: 1 
-    },
-    navBtns: { 
-        display: "flex", 
-        gap: "10px" 
-    },
-    btnLight: { 
-        padding: "10px 20px", 
-        background: "rgba(255,255,255,0.15)", 
-        color: "#FFFDD0", 
-        borderRadius: "12px", 
-        border: "1px solid rgba(255,255,255,0.2)", 
-        fontSize: "11px", 
-        fontWeight: "bold", 
-        textDecoration: "none" 
-    },
-    btnDark: { 
-        padding: "10px 20px", 
-        background: "#6F4E37", 
-        color: "#FFFDD0", 
-        borderRadius: "12px", 
-        fontSize: "11px", 
-        fontWeight: "bold", 
-        textDecoration: "none" 
-    },
-    mainContent: { 
-        flex: 1, 
-        paddingTop: "180px", 
-        width: "100%", 
-        display: "flex", 
-        flexDirection: "column",
-        zIndex: 10
-    },
-    page: { 
-        width: "100%", 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        paddingBottom: "100px", 
-        paddingLeft: "20px", 
-        paddingRight: "20px" 
-    },
-    menuFilterWrap: { 
-        display: "flex", 
-        gap: "10px", 
-        marginBottom: "40px", 
-        background: "rgba(255,255,255,0.05)", 
-        padding: "8px", 
-        borderRadius: "20px", 
-        backdropFilter: "blur(10px)" 
-    },
-    filterBtn: (active: boolean) => ({ 
-        padding: "10px 25px", 
-        borderRadius: "14px", 
-        background: active ? "#6F4E37" : "transparent", 
-        color: active ? "#FFFDD0" : "rgba(255,253,208,0.4)", 
-        fontWeight: "800", 
-        fontSize: "12px", 
-        cursor: "pointer" 
-    }),
-    heroCard: { 
-        padding: "80px 60px", 
-        background: "rgba(255,255,255,0.04)", 
-        backdropFilter: "blur(40px)", 
-        borderRadius: "50px", 
-        border: "1px solid rgba(255,255,255,0.1)", 
-        textAlign: "center", 
-        maxWidth: "800px" 
-    },
-    heroLogo: { 
-        width: "140px", 
-        height: "140px", 
-        borderRadius: "50%", 
-        border: "4px solid #6F4E37", 
-        marginBottom: "30px", 
-        backgroundColor: "#fff" 
-    },
-    h1: { 
-        fontFamily: "'Playfair Display', serif", 
-        fontSize: "70px", 
-        color: "#FFFDD0", 
-        margin: "0 0 20px", 
-        lineHeight: 1.1 
-    },
-    p: { 
-        fontSize: "18px", 
-        color: "#FFFDD0", 
-        opacity: 0.8, 
-        marginBottom: "40px" 
-    },
-    ctaButton: { 
-        padding: "18px 40px", 
-        background: "#6F4E37", 
-        color: "#FFFDD0", 
-        borderRadius: "20px", 
-        border: "none", 
-        fontSize: "16px", 
-        fontWeight: "bold", 
-        cursor: "pointer" 
-    },
-    pageTitle: { 
-        fontFamily: "'Playfair Display', serif", 
-        fontSize: "50px", 
-        color: "#FFFDD0", 
-        marginBottom: "50px" 
-    },
-    grid: { 
-        display: "flex", 
-        flexWrap: "wrap", 
-        justifyContent: "center", 
-        gap: "30px", 
-        maxWidth: "1200px" 
-    },
-    card: { 
-        width: "280px", 
-        padding: "40px 25px 30px", 
-        background: "rgba(255,255,255,0.06)", 
-        backdropFilter: "blur(20px)", 
-        borderRadius: "35px", 
-        border: "1px solid rgba(255,255,255,0.1)", 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        cursor: "pointer" 
-    },
-    secretCard: { 
-        width: "280px", 
-        padding: "40px 25px 30px", 
-        background: "rgba(168,85,247,0.05)", 
-        backdropFilter: "blur(20px)", 
-        borderRadius: "35px", 
-        border: "1px solid rgba(168,85,247,0.3)", 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        boxShadow: "0 0 30px rgba(168,85,247,0.1)", 
-        cursor: "pointer" 
-    },
-    menuIcon: { 
-        fontSize: "40px", 
-        marginBottom: "20px" 
-    },
-    priceTag: { 
-        marginTop: "20px", 
-        padding: "8px 20px", 
-        background: "rgba(255,253,208,0.1)", 
-        borderRadius: "12px", 
-        color: "#FFFDD0", 
-        fontWeight: "900", 
-        fontSize: "14px" 
-    },
-    avatarWrap: { 
-        position: "relative", 
-        width: "90px", 
-        height: "90px", 
-        marginBottom: "15px" 
-    },
-    avatarInner: { 
-        width: "100%", 
-        height: "100%", 
-        borderRadius: "50%", 
-        border: "3px solid #6F4E37", 
-        overflow: "hidden", 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center" 
-    },
-    imgFull: { 
-        width: "100%", 
-        height: "100%", 
-        objectFit: "cover" 
-    },
-    statusDot: { 
-        position: "absolute", 
-        bottom: "0px", 
-        right: "0px", 
-        width: "22px", 
-        height: "22px", 
-        borderRadius: "50%", 
-        border: "4px solid #1a0f0d", 
-        zIndex: 10 
-    },
-    cardTitle: { 
-        color: "#FFFDD0", 
-        fontSize: "22px", 
-        margin: "10px 0", 
-        textAlign: "center", 
-        fontWeight: "bold" 
-    },
-    cardDesc: { 
-        color: "#FFFDD0", 
-        opacity: 0.6, 
-        fontSize: "13px", 
-        textAlign: "center", 
-        lineHeight: 1.5 
-    },
-    badge: { 
-        padding: "5px 12px", 
-        background: "#6F4E37", 
-        color: "#FFFDD0", 
-        borderRadius: "8px", 
-        fontSize: "10px", 
-        fontWeight: "bold", 
-        textTransform: "uppercase" 
-    },
-    cardBtn: { 
-        marginTop: "20px", 
-        padding: "8px 16px", 
-        background: "rgba(255,255,255,0.1)", 
-        color: "#FFFDD0", 
-        border: "1px solid rgba(255,255,255,0.2)", 
-        borderRadius: "10px", 
-        fontSize: "11px", 
-        fontWeight: "bold", 
-        cursor: "pointer" 
-    },
-    dateText: { 
-        color: "#A855F7", 
-        fontSize: "13px", 
-        fontWeight: "900", 
-        marginBottom: "10px" 
-    },
-    footer: { 
-        textAlign: "center", 
-        padding: "60px 40px", 
-        color: "#FFFDD0", 
-        opacity: 0.4, 
-        fontSize: "11px",
-        zIndex: 10
-    },
-    overlay: { 
-        position: "fixed", 
-        inset: 0, 
-        background: "rgba(0,0,0,0.8)", 
-        backdropFilter: "blur(30px)", 
-        zIndex: 9999, 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center" 
-    },
-    modal: { 
-        background: "rgba(42,23,18,0.98)", 
-        padding: "50px", 
-        borderRadius: "45px", 
-        border: "1px solid rgba(255,255,255,0.1)", 
-        maxWidth: "500px", 
-        width: "90%", 
-        position: "relative" 
-    },
-    closeBtn: { 
-        position: "absolute", 
-        top: "25px", 
-        right: "30px", 
-        fontSize: "36px", 
-        color: "#FFFDD0", 
-        background: "transparent", 
-        border: "none", 
-        cursor: "pointer", 
-        opacity: 0.5 
-    },
-    modalHeader: { 
-        display: "flex", 
-        gap: "25px", 
-        alignItems: "center", 
-        marginBottom: "25px" 
-    },
-    mAvatarWrap: { 
-        position: "relative", 
-        width: "90px", 
-        height: "90px" 
-    },
-    mAvatarInner: { 
-        width: "100%", 
-        height: "100%", 
-        borderRadius: "20px", 
-        border: "3px solid #6F4E37", 
-        overflow: "hidden" 
-    },
-    mStatusDot: { 
-        position: "absolute", 
-        bottom: "-5px", 
-        right: "-5px", 
-        width: "26px", 
-        height: "26px", 
-        borderRadius: "50%", 
-        border: "4px solid #1a0f0d", 
-        zIndex: 10 
-    },
-    mTitle: { 
-        fontFamily: "'Playfair Display', serif", 
-        color: "#FFFDD0", 
-        fontSize: "36px", 
-        margin: "0" 
-    },
-    mBio: { 
-        color: "#FFFDD0", 
-        fontSize: "16px", 
-        opacity: 0.8, 
-        lineHeight: 1.6, 
-        marginBottom: "30px", 
-        textAlign: "left" 
-    },
-    socialRow: { 
-        display: "flex", 
-        gap: "10px" 
-    },
-    socialTag: { 
-        padding: "10px 25px", 
-        background: "#6F4E37", 
-        color: "#FFFDD0", 
-        borderRadius: "15px", 
-        fontWeight: "900", 
-        fontSize: "13px" 
-    }
 }
